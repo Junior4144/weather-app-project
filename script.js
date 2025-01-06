@@ -61,51 +61,52 @@ function addDataToPage(arr){
     //obtain an array of objs
 }
 
-// if(!weatherData.ok){
-//     throw new Error(`Response status for weatherData: ${weatherData.status}`);
-// }
-
-// if(!data.ok){
-//     throw new Error(`Response status for data: ${data.status}`);
-// }
-
 
 async function fetchData(location){
     
+    try{
+        const weatherData = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=DJ7YDUHEMTWA4FZ69Y6YLHXM6`)
+
+        if(!weatherData.ok){
+            throw new Error(`Response status for weatherData: ${weatherData.status}`)
+        }
 
 
-  
-
-    const weatherData = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=DJ7YDUHEMTWA4FZ69Y6YLHXM6`)
-    .catch( (error) =>{
-        alert('weatherData error')
+        const data = await weatherData.json();
+    
+        let arr = []
+    
+        data.days.forEach(day => {
+            const date = day.datetime;
+            const description = day.description;
+            const minTemp =  day.tempmin;
+            const maxTemp = day.tempmax;
+    
+            const obj = new weatherObject(date, description, minTemp, maxTemp);
+    
+            arr.push(obj);
+        });
+    
         const input = document.querySelector('input');
+        input.style.border = "3px solid #2f2f2f";
+
         input.value = '';
-    })
-    const data = await weatherData.json().catch( (error) =>{
-        alert("data error")
+        addDataToPage(arr);
+
+    }catch(error){
         const input = document.querySelector('input');
-        input.value = '';
-        
-    })
-
-    let arr = []
-
-    data.days.forEach(day => {
-        const date = day.datetime;
-        const description = day.description;
-        const minTemp =  day.tempmin;
-        const maxTemp = day.tempmax;
-
-        const obj = new weatherObject(date, description, minTemp, maxTemp);
-
-        arr.push(obj);
-    });
-
-    const input = document.querySelector('input');
-    input.value = '';
-    addDataToPage(arr);
+        input.style.border = "3px dotted red";
+        input.value = ''
+        const info_container = document.querySelector('.info-container');
+        info_container.style.visibility = "hidden";
+    }
+    
 }
+
+
+
+
+
 
 const form = document.querySelector('form');
 
