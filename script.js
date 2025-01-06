@@ -61,12 +61,36 @@ function addDataToPage(arr){
     //obtain an array of objs
 }
 
+// if(!weatherData.ok){
+//     throw new Error(`Response status for weatherData: ${weatherData.status}`);
+// }
+
+// if(!data.ok){
+//     throw new Error(`Response status for data: ${data.status}`);
+// }
+
 
 async function fetchData(location){
     
+
+
+  
+
     const weatherData = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=DJ7YDUHEMTWA4FZ69Y6YLHXM6`)
-    const data = await weatherData.json();
+    .catch( (error) =>{
+        alert('weatherData error')
+        const input = document.querySelector('input');
+        input.value = '';
+    })
+    const data = await weatherData.json().catch( (error) =>{
+        alert("data error")
+        const input = document.querySelector('input');
+        input.value = '';
+        
+    })
+
     let arr = []
+
     data.days.forEach(day => {
         const date = day.datetime;
         const description = day.description;
@@ -81,7 +105,6 @@ async function fetchData(location){
     const input = document.querySelector('input');
     input.value = '';
     addDataToPage(arr);
-    
 }
 
 const form = document.querySelector('form');
@@ -89,6 +112,9 @@ const form = document.querySelector('form');
 form.addEventListener('submit', (event) => {
     event.preventDefault();
     const location = document.querySelector('input').value;
+    
+    const info = document.querySelector('.info-container');
+    info.innerHTML = '';
     
     fetchData(location);
 
